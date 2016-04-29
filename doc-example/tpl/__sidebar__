@@ -1,0 +1,10 @@
+docs:
+  getting_started:
+    overview: /kw-doc/docs/index.html
+    setup: /kw-doc/docs/setup.html
+  basic_usage:
+    import: /kw-doc/docs/import.html
+  miscellaneous:
+    tools: /kw-doc/docs/tools.html
+    troubleshooting: /kw-doc/docs/troubleshooting.html
+    contributing: /kw-doc/docs/contributing.html

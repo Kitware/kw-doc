@@ -1,0 +1,29 @@
+{
+  "name": "kw-doc",
+  "version": "0.0.0-semantically-release",
+  "description": "Static website generator based on Hexo to build developer documentation.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kitware/kw-doc.git"
+  },
+  "license": "BSD-3-Clause",
+  "bugs": { "url": "https://github.com/kitware/kw-doc/issues" },
+  "homepage": "https://github.com/kitware/kw-doc#readme",
+  "dependencies": {
+    "commander": "2.9.0",
+    "shelljs": "0.5.3",
+    "gh-pages": "0.10.0"
+  },
+  "scripts": {
+    "commit": "git cz",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+  },
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-conventional-changelog"
+    }
+  },
+  "bin": {
+    "kw-doc": "./bin/kw-doc-cli.js"
+  }
+}

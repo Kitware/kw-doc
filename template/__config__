@@ -1,0 +1,9 @@
+language: en
+new_post_name: :year-:month-:day-:title.md # File name of new posts
+post_asset_folder: true
+archive_dir: news
+highlight:
+  enable: true
+  line_number: false
+per_page: 0
+theme: navy
