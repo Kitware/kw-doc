@@ -15,7 +15,9 @@
     "gh-pages": "0.10.0"
   },
   "devDependencies": {
-    "cz-conventional-changelog": "1.1.5"
+    "commitizen": "2.7.3",
+    "cz-conventional-changelog": "1.1.5",
+    "semantic-release": "4.3.5"
   },
   "scripts": {
     "demo": "./bin/kw-doc-cli.js -c ./doc-example/kw-doc.js",
