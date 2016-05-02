@@ -155,12 +155,14 @@ function doneWithProcessing() {
   // Generate sidebar and traduction for Hexo
   // ----------------------------------------------------------------------------
 
+  shell.mkdir('-p', path.join(workDir, 'source/_data'));
   var destSideBar = path.join(workDir, 'source/_data/sidebar.yml');
   var srcSideBar = path.join(basePath, 'tpl/__sidebar__');
   shell.cat(srcSideBar).to(destSideBar);
   templateData.__sidebar__.join('\n').toEnd(destSideBar);
   ('\n\n').toEnd(destSideBar);
 
+  shell.mkdir('-p', path.join(workDir, 'themes/navy/languages'));
   var destTraduction = path.join(workDir, 'themes/navy/languages/en.yml');
   var srcTraduction = path.join(basePath, 'tpl/__en__');
   shell.cat(srcTraduction).to(destTraduction);
