@@ -1,17 +1,16 @@
 #! /usr/bin/env node
 
 /* eslint-disable */
-var program = require('commander'),
-    shell = require('shelljs'),
-    // Hexo = require('hexo'),
-    path = require('path'),
-    api = require('./api.js'),
-    examples = require('./examples.js');
+var program = require('commander');
+var shell = require('shelljs');
+var path = require('path');
+var api = require('./api.js');
 
 program
   .option('-c, --config [file.js]', 'Configuration file')
   .option('-p, --publish',          'Publish documentation to github.io/gh-pages')
   .option('-s, --serve',            'Serve documentation at http://localhost:3000/{baseURL}')
+  .option('-f, --filter [names...]','Filter examples to generate')
   .parse(process.argv);
 
 // ----------------------------------------------------------------------------
@@ -33,7 +32,7 @@ var configuration = require(configFilePath);
 
 // Variable extraction
 var workDir = path.join(basePath, configuration.work);
-var targetDir = path.join(basePath, configuration.target);
+var targetDir = configuration.target ? path.join(basePath, configuration.target) : null;
 
 // Shared variables
 var copyPool = [];
@@ -44,6 +43,8 @@ var templateData = {
   __en__: [],
   __sidebar__: [],
   TAB: '  ',
+  baseUrl: configuration.baseUrl,
+  webpack: configuration.webpack || {},
   // Directories
   directories: {
     work: workDir,
@@ -73,6 +74,20 @@ copyPool.push({ src: path.join(basePath, 'data/*'), dest: path.join(workDir, 'so
 
 // User content
 copyPool.push({ src: path.join(basePath, 'content/*'), dest: path.join(workDir, 'source/') });
+
+// ----------------------------------------------------------------------------
+// Add copy from config
+// ----------------------------------------------------------------------------
+
+if (configuration.copy) {
+  configuration.copy.forEach(item => {
+    copyPool.push({
+      src: path.join(basePath, item.src),
+      dest: path.join(basePath, item.dest),
+    });
+    shell.mkdir('-p', path.join(basePath, item.dest));
+  })
+}
 
 // ----------------------------------------------------------------------------
 // Process copy pool
@@ -113,9 +128,14 @@ if (configuration.api) {
 // Extract examples
 // ----------------------------------------------------------------------------
 
-if (configuration.examples) {
+if (configuration.examples && configuration.webpack) {
+
+  var filterExamples = [].concat(program.filter, program.args).filter(i => !!i);
+  var buildAll = filterExamples.length === 0 || program.filter === true;
+  var exampleCount = 0;
+
   console.log('\n=> Extract examples\n');
-  configuration.api.forEach(function (directory) {
+  configuration.examples.forEach(function (directory) {
     var fullPath = path.join(basePath, directory);
 
     // Single example use case
@@ -134,10 +154,19 @@ if (configuration.examples) {
         exampleName = fullPath.pop(); // example
         exampleName = fullPath.pop(); // className
 
-        currentExamples[exampleName] = './' + file;
-        console.log(' -', exampleName, ':', file)
+        if (buildAll || filterExamples.indexOf(exampleName) !== -1) {
+          currentExamples[exampleName] = './' + file;
+          console.log(' -', exampleName, ':', file);
+          exampleCount++;
+        } else {
+          console.log(' -', exampleName, ': SKIPPED');
+        }
       });
   });
+
+  if (exampleCount === 0) {
+    templateData.examples = null;
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -145,7 +174,9 @@ if (configuration.examples) {
 // ----------------------------------------------------------------------------
 
 // This is a long process
-examples(templateData, doneWithProcessing);
+if (templateData.examples && configuration.webpack) {
+  require('./examples.js')(templateData, doneWithProcessing);
+}
 
 // ----------------------------------------------------------------------------
 
@@ -197,6 +228,15 @@ function doneWithProcessing() {
   shell.cd(workDir);
   shell.exec('npm install');
   shell.exec('npm run generate');
+
+  // ----------------------------------------------------------------------------
+  // Copy generated data to target if any
+  // ----------------------------------------------------------------------------
+
+  if (targetDir) {
+    shell.mkdir('-p', targetDir);
+    shell.cp('-rf', workDir + '/public/*', targetDir);
+  }
 
   // ----------------------------------------------------------------------------
   // Github pages
