@@ -243,7 +243,7 @@ function doneWithProcessing() {
   // ----------------------------------------------------------------------------
 
   if(program.publish) {
-      console.log('\n=> Publish', publishBaseURL, '\n');
+      console.log('\n=> Publish\n');
       var options = {};
 
       if(process.env.GIT_PUBLISH_URL) {
