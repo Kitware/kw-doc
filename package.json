@@ -15,8 +15,8 @@
     "gh-pages": "0.10.0"
   },
   "devDependencies": {
-    "commitizen": "2.7.3",
-    "cz-conventional-changelog": "1.1.5",
+    "commitizen": "2.8.1",
+    "cz-conventional-changelog": "1.1.6",
     "semantic-release": "4.3.5"
   },
   "scripts": {
