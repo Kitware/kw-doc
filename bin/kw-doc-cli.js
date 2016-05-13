@@ -122,6 +122,12 @@ if (configuration.api) {
       });
   });
   console.log('\n-----------------\n');
+
+  templateData.__en__ = [templateData.__en__
+    .filter(function(item, index) {
+      return templateData.__en__.indexOf(item) === index;
+    })
+    .join('\n')];
 }
 
 // ----------------------------------------------------------------------------
@@ -129,7 +135,6 @@ if (configuration.api) {
 // ----------------------------------------------------------------------------
 
 if (configuration.examples && configuration.webpack) {
-
   var filterExamples = [].concat(program.filter, program.args).filter(i => !!i);
   var buildAll = filterExamples.length === 0 || program.filter === true;
   var exampleCount = 0;
@@ -167,6 +172,12 @@ if (configuration.examples && configuration.webpack) {
   if (exampleCount === 0) {
     templateData.examples = null;
   }
+
+  templateData.__en__ = [templateData.__en__
+    .filter(function(item, index) {
+      return templateData.__en__.indexOf(item) === index;
+    })
+    .join('\n')];
 }
 
 // ----------------------------------------------------------------------------
@@ -197,14 +208,7 @@ function doneWithProcessing() {
   var destTraduction = path.join(workDir, 'themes/navy/languages/en.yml');
   var srcTraduction = path.join(basePath, 'tpl/__en__');
   shell.cat(srcTraduction).to(destTraduction);
-
-  // Remove duplicate traduction
-  templateData.__en__
-    .filter(function(item, index) {
-      return templateData.__en__.indexOf(item) === index;
-    })
-    .join('\n').toEnd(destTraduction);
-
+  templateData.__en__.join('\n').toEnd(destTraduction);
   ('\n\n').toEnd(destTraduction);
 
   shell.echo(configuration.cname).to(path.join(workDir, 'CNAME'));
