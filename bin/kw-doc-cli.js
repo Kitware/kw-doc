@@ -197,7 +197,14 @@ function doneWithProcessing() {
   var destTraduction = path.join(workDir, 'themes/navy/languages/en.yml');
   var srcTraduction = path.join(basePath, 'tpl/__en__');
   shell.cat(srcTraduction).to(destTraduction);
-  templateData.__en__.join('\n').toEnd(destTraduction);
+
+  // Remove duplicate traduction
+  templateData.__en__
+    .filter(function(item, index) {
+      return templateData.__en__.indexOf(item) === index;
+    })
+    .join('\n').toEnd(destTraduction);
+
   ('\n\n').toEnd(destTraduction);
 
   shell.echo(configuration.cname).to(path.join(workDir, 'CNAME'));
