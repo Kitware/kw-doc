@@ -187,6 +187,8 @@ if (configuration.examples && configuration.webpack) {
 // This is a long process
 if (templateData.examples && configuration.webpack) {
   require('./examples.js')(templateData, doneWithProcessing);
+} else {
+  doneWithProcessing();
 }
 
 // ----------------------------------------------------------------------------
