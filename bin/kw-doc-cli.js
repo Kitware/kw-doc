@@ -213,7 +213,9 @@ function doneWithProcessing() {
   templateData.__en__.join('\n').toEnd(destTraduction);
   ('\n\n').toEnd(destTraduction);
 
-  shell.echo(configuration.cname).to(path.join(workDir, 'CNAME'));
+  if (configuration.cname) {
+    shell.echo(configuration.cname).to(path.join(workDir, 'CNAME'));
+  }
 
   // ----------------------------------------------------------------------------
   // Generate _config.yml
