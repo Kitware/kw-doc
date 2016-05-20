@@ -81,8 +81,8 @@ module.exports = function(templateData, done) {
     exampleGroups[gName].forEach( function(exampleName) {
       templateData.__sidebar__.push(templateData.TAB + templateData.TAB + exampleName + ': ' + exampleName + '.html');
       var destMdFile = path.join(markdownBaseExample, exampleName + '.md');
-      (exampleName + '\n----\n### [Live example](./' + exampleName + ')\n\n').to(destMdFile);
-      ('<iframe src="./'+ exampleName +'" width="100%" height="500px"></iframe>\n\n### Source\n\n```js\n').toEnd(destMdFile);
+      (exampleName + '\n----\n### [Live example](./' + exampleName + '/index.html)\n\n').to(destMdFile);
+      ('<iframe src="./'+ exampleName +'/index.html" width="100%" height="500px"></iframe>\n\n### Source\n\n```js\n').toEnd(destMdFile);
       shell.cat(sourceMap[exampleName]).toEnd(destMdFile);
       '\n```\n\n'.toEnd(destMdFile);
     });
