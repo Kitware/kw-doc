@@ -54,7 +54,16 @@ module.exports = function(templateData, done) {
       shell.rm('-rf', destPath + '/*');
       examplesToBuild.push({ name: className, destPath: destPath, sourcePath: sourcePath });
 
-      var pathName = sourcePath.split('/').slice(-5, -3).join('/');
+      var fullSplittedPath = sourcePath.split('/');
+      while(fullSplittedPath.pop() !== className) {
+        // pop is in condition
+      }
+      // Cut the front (FIXME should know what is the start path)
+      while(fullSplittedPath.length > 2) {
+        fullSplittedPath.shift();
+      }
+
+      var pathName = fullSplittedPath.join('/');
       if(exampleGroups[pathName]) {
         exampleGroups[pathName].push(className);
         templateData.__en__.push(templateData.TAB + templateData.TAB + className + ': ' + className);

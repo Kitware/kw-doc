@@ -140,8 +140,9 @@ if (configuration.examples && configuration.webpack) {
   var exampleCount = 0;
 
   console.log('\n=> Extract examples\n');
-  configuration.examples.forEach(function (directory) {
-    var fullPath = path.join(basePath, directory);
+  configuration.examples.forEach(function (entry) {
+    const regexp = entry.regexp ? new RegExp(entry.regexp) : /example\/index.js$/;
+    var fullPath = path.join(basePath, entry.path ? entry.path : entry);
 
     // Single example use case
     templateData.examples[fullPath] = {};
@@ -149,15 +150,15 @@ if (configuration.examples && configuration.webpack) {
     shell.cd(fullPath);
     shell.find('.')
       .filter( function(file) {
-        return file.match(/example\/index.js$/);
+        return file.match(regexp);
       })
       .forEach( function(file) {
-        var fullPath =  file.split('/'),
-          exampleName;
+        var fullPath = file.split('/'),
+          exampleName = fullPath.pop();
 
-        exampleName = fullPath.pop(); // index.js
-        exampleName = fullPath.pop(); // example
-        exampleName = fullPath.pop(); // className
+        while (['index.js', 'example'].indexOf(exampleName) !== -1) {
+          exampleName = fullPath.pop();
+        }
 
         if (buildAll || filterExamples.indexOf(exampleName) !== -1) {
           currentExamples[exampleName] = './' + file;
