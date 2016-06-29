@@ -26,13 +26,13 @@ if (!process.argv.slice(2).length) {
 // Load configuration
 // ----------------------------------------------------------------------------
 
-var configFilePath = path.join(process.env.PWD, program.config);
+var configFilePath = path.join(process.cwd(), program.config.replace(/\//g, path.sep));
 var basePath = path.dirname(configFilePath);
 var configuration = require(configFilePath);
 
 // Variable extraction
-var workDir = path.join(basePath, configuration.work);
-var targetDir = configuration.target ? path.join(basePath, configuration.target) : null;
+var workDir = path.join(basePath, configuration.work.replace(/\//g, path.sep));
+var targetDir = configuration.target ? path.join(basePath, configuration.target.replace(/\//g, path.sep)) : null;
 
 // Shared variables
 var copyPool = [];
@@ -103,6 +103,12 @@ while (copyPool.length) {
 // Generate API
 // ----------------------------------------------------------------------------
 
+function getSplitedPath(filePath) {
+  var a = filePath.split('/');
+  var b = filePath.split('\\');
+  return a.length > b.length ? a : b;
+}
+
 if (configuration.api) {
   console.log('\n=> Build API\n');
 
@@ -115,7 +121,7 @@ if (configuration.api) {
     shell.find('.')
       .filter( function(file) {
         // FIXME expect {base}/[{module}/{package}]/{classname}
-        return file.split(path.sep).length === 2 && shell.test('-d', file);
+        return getSplitedPath(file).length === 2 && shell.test('-d', file);
       })
       .forEach( function(module) {
         api(fullPath, module, templateData);
@@ -153,7 +159,7 @@ if (configuration.examples && configuration.webpack) {
         return file.match(regexp);
       })
       .forEach( function(file) {
-        var fullPath = file.split(path.sep),
+        var fullPath = getSplitedPath(file),
           exampleName = fullPath.pop();
 
         while (['index.js', 'example'].indexOf(exampleName) !== -1) {

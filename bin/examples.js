@@ -4,6 +4,12 @@ var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var templatePath = path.resolve(__dirname, './template.html');
 
+function getSplitedPath(filePath) {
+  var a = filePath.split('/');
+  var b = filePath.split('\\');
+  return a.length > b.length ? a : b;
+}
+
 function buildWebpackConfiguration(defaultConfig, name, baseURL, sourcePath, destPath) {
   var examplePlugins = [
     new HtmlWebpackPlugin({
@@ -54,7 +60,7 @@ module.exports = function(templateData, done) {
       shell.rm('-rf', destPath + '/*');
       examplesToBuild.push({ name: className, destPath: destPath, sourcePath: sourcePath });
 
-      var fullSplittedPath = sourcePath.split(path.sep);
+      var fullSplittedPath = getSplitedPath(sourcePath);
       while(fullSplittedPath.pop() !== className) {
         // pop is in condition
       }
