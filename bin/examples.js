@@ -54,7 +54,7 @@ module.exports = function(templateData, done) {
       shell.rm('-rf', destPath + '/*');
       examplesToBuild.push({ name: className, destPath: destPath, sourcePath: sourcePath });
 
-      var fullSplittedPath = sourcePath.split('/');
+      var fullSplittedPath = sourcePath.split(path.sep);
       while(fullSplittedPath.pop() !== className) {
         // pop is in condition
       }

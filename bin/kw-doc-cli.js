@@ -115,7 +115,7 @@ if (configuration.api) {
     shell.find('.')
       .filter( function(file) {
         // FIXME expect {base}/[{module}/{package}]/{classname}
-        return file.split('/').length === 2 && shell.test('-d', file);
+        return file.split(path.sep).length === 2 && shell.test('-d', file);
       })
       .forEach( function(module) {
         api(fullPath, module, templateData);
@@ -153,7 +153,7 @@ if (configuration.examples && configuration.webpack) {
         return file.match(regexp);
       })
       .forEach( function(file) {
-        var fullPath = file.split('/'),
+        var fullPath = file.split(path.sep),
           exampleName = fullPath.pop();
 
         while (['index.js', 'example'].indexOf(exampleName) !== -1) {
