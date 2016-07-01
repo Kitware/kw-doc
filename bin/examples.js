@@ -113,8 +113,10 @@ module.exports = function(templateData, done) {
           } else if (stats.hasWarnings()) {
               console.warn(' --> ' + example.name + ' built with warnings.');
               console.warn(jsonStats.warnings);
+              console.log(' --> ok (with warning)', example.name);
+              buildExample(list, done);
           } else {
-              console.log(' --> ok');
+              console.log(' --> ok', example.name);
               buildExample(list, done);
           }
       });
