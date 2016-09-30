@@ -21,6 +21,10 @@ function processModule(basePath, mPath, templateData) {
 function processClass(bPath, className, templateData) {
   var files = shell.ls(path.join(bPath, className))
         .filter(function(f) {
+          // Do not include images
+          if (['.jpeg', '.png', '.jpg', '.svg'].filter(ext => f.endsWith(ext)).length) {
+            return false;
+          }
           return shell.test('-f', path.join(bPath, className, f));
         }),
       apiIdx = files.indexOf('api.md'),
