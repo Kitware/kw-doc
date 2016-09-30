@@ -58,9 +58,7 @@ module.exports = function(templateData, done) {
       var sourcePath = path.join(fullPath, templateData.examples[fullPath][className]);
       sourceMap[className] = sourcePath;
       const addOnFilePath = path.join(path.dirname(sourcePath), 'index.md');
-      console.log('check if file exist...', addOnFilePath);
       if (shell.test('-f', addOnFilePath)) {
-        console.log('+++++++++>', addOnFilePath);
         addonContentMap[className] = addOnFilePath;
       }
       shell.mkdir('-p', destPath);
