@@ -50,12 +50,19 @@ module.exports = function(templateData, done) {
   templateData.__sidebar__.push('examples:');
   var exampleGroups = {};
   var sourceMap = {};
+  var addonContentMap = {};
 
   Object.keys(templateData.examples).forEach(function(fullPath) {
     Object.keys(templateData.examples[fullPath]).forEach(function(className) {
       var destPath = path.join(baseExampleDirectory, className);
       var sourcePath = path.join(fullPath, templateData.examples[fullPath][className]);
       sourceMap[className] = sourcePath;
+      const addOnFilePath = path.join(path.dirname(sourcePath), 'index.md');
+      console.log('check if file exist...', addOnFilePath);
+      if (shell.test('-f', addOnFilePath)) {
+        console.log('+++++++++>', addOnFilePath);
+        addonContentMap[className] = addOnFilePath;
+      }
       shell.mkdir('-p', destPath);
       shell.rm('-rf', destPath + '/*');
       examplesToBuild.push({ name: className, destPath: destPath, sourcePath: sourcePath });
@@ -88,7 +95,11 @@ module.exports = function(templateData, done) {
       templateData.__sidebar__.push(templateData.TAB + templateData.TAB + exampleName + ': ' + exampleName + '.html');
       var destMdFile = path.join(markdownBaseExample, exampleName + '.md');
       (exampleName + '\n----\n### [Live example](./' + exampleName + '/index.html)\n\n').to(destMdFile);
-      ('<iframe src="./'+ exampleName +'/index.html" width="100%" height="500px"></iframe>\n\n### Source\n\n```js\n').toEnd(destMdFile);
+      ('<iframe src="./'+ exampleName +'/index.html" width="100%" height="500px"></iframe>\n').toEnd(destMdFile);
+      if (addonContentMap[exampleName]) {
+        shell.cat(addonContentMap[exampleName]).toEnd(destMdFile);
+      }
+      ('\n### Source\n\n```js\n').toEnd(destMdFile);
       shell.cat(sourceMap[exampleName]).toEnd(destMdFile);
       '\n```\n\n'.toEnd(destMdFile);
     });
