@@ -1,5 +1,6 @@
 var path = require('path');
 var shell = require('shelljs');
+var fs = require('fs');
 var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var templatePath = path.resolve(__dirname, './template.html');
@@ -10,7 +11,7 @@ function getSplitedPath(filePath) {
   return a.length > b.length ? a : b;
 }
 
-function buildWebpackConfiguration(defaultConfig, name, baseURL, sourcePath, destPath) {
+function buildWebpackConfiguration(defaultConfig, name, baseURL, sourcePath, destPath, compress = true) {
   var examplePlugins = [
     new HtmlWebpackPlugin({
         template: templatePath,
@@ -21,6 +22,17 @@ function buildWebpackConfiguration(defaultConfig, name, baseURL, sourcePath, des
         __BASE_PATH__: "'" + baseURL + "'",
     }),
   ];
+
+  if (compress) {
+    examplePlugins.push(new webpack.optimize.UglifyJsPlugin({
+      compress: {
+        warnings: false,
+      },
+      output: {
+        comments: false,
+      },
+    }));
+  }
 
   var config = Object.assign(
     {
@@ -92,19 +104,39 @@ module.exports = function(templateData, done) {
     exampleGroups[gName].forEach( function(exampleName) {
       templateData.__sidebar__.push(templateData.TAB + templateData.TAB + exampleName + ': ' + exampleName + '.html');
       var destMdFile = path.join(markdownBaseExample, exampleName + '.md');
-      (exampleName + '\n----\n### [Live example](./' + exampleName + '/index.html)\n\n').to(destMdFile);
-      ('<iframe src="./'+ exampleName +'/index.html" width="100%" height="500px"></iframe>\n').toEnd(destMdFile);
+      shell.ShellString(exampleName + '\n----\n### [Live example](./' + exampleName + '/index.html)\n\n').to(destMdFile);
+      shell.ShellString('<iframe src="./'+ exampleName +'/index.html" width="100%" height="500px"></iframe>\n').toEnd(destMdFile);
       if (addonContentMap[exampleName]) {
         shell.cat(addonContentMap[exampleName]).toEnd(destMdFile);
       }
-      ('\n### Source\n\n```js\n').toEnd(destMdFile);
+      shell.ShellString('\n### Source\n\n```js\n').toEnd(destMdFile);
       shell.cat(sourceMap[exampleName]).toEnd(destMdFile);
-      '\n```\n\n'.toEnd(destMdFile);
+      shell.ShellString('\n```\n\n').toEnd(destMdFile);
     });
   });
 
   var defaultConfig = templateData.webpack;
   var baseURL = templateData.baseUrl;
+
+  function bundleIntoSingleHtml(example) {
+    var htmlTemplate = fs.readFileSync(templatePath, { encoding: 'utf8', flag: 'r' });
+    var jsCode = fs.readFileSync(path.join(example.destPath, example.name + '.js'), { encoding: 'utf8', flag: 'r' });
+
+    var lines = htmlTemplate.split('\n');
+    var count = lines.length;
+    while (count--) {
+      if (lines[count].indexOf('</body>') !== -1) {
+        lines[count] = [
+          '<script type="text/javascript">',
+          jsCode,
+          '</script>',
+          '</body>',
+        ].join('\n');
+      }
+    }
+
+    shell.ShellString(lines.join('\n')).to(path.join(example.destPath, example.name + '.html'));
+  }
 
   function buildExample(list, done) {
     if (list.length) {
@@ -123,9 +155,11 @@ module.exports = function(templateData, done) {
               console.warn(' --> ' + example.name + ' built with warnings.');
               console.warn(jsonStats.warnings);
               console.log(' --> ok (with warning)', example.name);
+              bundleIntoSingleHtml(example);
               buildExample(list, done);
           } else {
               console.log(' --> ok', example.name);
+              bundleIntoSingleHtml(example);
               buildExample(list, done);
           }
       });

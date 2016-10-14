@@ -210,15 +210,15 @@ function doneWithProcessing() {
   var destSideBar = path.join(workDir, 'source/_data/sidebar.yml');
   var srcSideBar = path.join(basePath, 'tpl/__sidebar__');
   shell.cat(srcSideBar).to(destSideBar);
-  templateData.__sidebar__.join('\n').toEnd(destSideBar);
-  ('\n\n').toEnd(destSideBar);
+  shell.ShellString(templateData.__sidebar__.join('\n')).toEnd(destSideBar);
+  shell.ShellString('\n\n').toEnd(destSideBar);
 
   shell.mkdir('-p', path.join(workDir, 'themes/navy/languages'));
   var destTraduction = path.join(workDir, 'themes/navy/languages/en.yml');
   var srcTraduction = path.join(basePath, 'tpl/__en__');
   shell.cat(srcTraduction).to(destTraduction);
-  templateData.__en__.join('\n').toEnd(destTraduction);
-  ('\n\n').toEnd(destTraduction);
+  shell.ShellString(templateData.__en__.join('\n')).toEnd(destTraduction);
+  shell.ShellString('\n\n').toEnd(destTraduction);
 
   if (configuration.cname) {
     shell.echo(configuration.cname).to(path.join(workDir, 'CNAME'));
@@ -232,9 +232,9 @@ function doneWithProcessing() {
   shell.cat(path.join(workDir, '__config__')).to(destConfig);
   var ymlConf = configuration.config;
   Object.keys(ymlConf).forEach(function(key) {
-    [ key, ': ', ymlConf[key], '\n'].join('').toEnd(destConfig);
+    shell.ShellString([ key, ': ', ymlConf[key], '\n'].join('')).toEnd(destConfig);
   });
-  '\n'.toEnd(destConfig);
+  shell.ShellString('\n').toEnd(destConfig);
 
   // ----------------------------------------------------------------------------
   // Fix CSS from style

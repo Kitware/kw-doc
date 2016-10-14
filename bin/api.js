@@ -36,18 +36,18 @@ function processClass(bPath, className, templateData) {
     console.log('  +', className);
 
     // Create MD file
-    ('title: ' + className + '\n---\n').to(newPath);
+    shell.ShellString('title: ' + className + '\n---\n').to(newPath);
     shell.cat(path.join(bPath, className, 'api.md')).toEnd(newPath);
   } else {
     console.log('  -', className);
-    ('title: ' + className + '\n---\n').to(newPath);
+    shell.ShellString('title: ' + className + '\n---\n').to(newPath);
   }
 
-  ('\n\n# Source\n\n').toEnd(newPath);
+  shell.ShellString('\n\n# Source\n\n').toEnd(newPath);
   files.forEach(function(sFile) {
-    ('``` js ' + sFile + '\n').toEnd(newPath);
+    shell.ShellString('``` js ' + sFile + '\n').toEnd(newPath);
     shell.cat(path.join(bPath, className, sFile)).toEnd(newPath);
-    ('```\n').toEnd(newPath);
+    shell.ShellString('```\n').toEnd(newPath);
   });
 }
 
