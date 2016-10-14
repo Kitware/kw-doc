@@ -50,6 +50,10 @@ function buildWebpackConfiguration(defaultConfig, name, baseURL, sourcePath, des
 
   // Add our plugins
   config.plugins = [].concat(config.plugins, examplePlugins);
+
+  // Expose build module
+  config.module.loaders.unshift({ test: sourcePath, loader: 'expose?' + name });
+
   return config;
 }
 
