@@ -11,7 +11,7 @@ function getSplitedPath(filePath) {
   return a.length > b.length ? a : b;
 }
 
-function buildWebpackConfiguration(defaultConfig, name, baseURL, sourcePath, destPath, compress = true) {
+function buildWebpackConfiguration(defaultConfig, name, baseURL, sourcePath, destPath, compress) {
   var examplePlugins = [
     new HtmlWebpackPlugin({
         template: templatePath,
@@ -57,7 +57,7 @@ function buildWebpackConfiguration(defaultConfig, name, baseURL, sourcePath, des
   return config;
 }
 
-module.exports = function(templateData, done) {
+module.exports = function(templateData, done, compress) {
   const baseExampleDirectory = path.join(templateData.directories.work, 'public/examples');
   const markdownBaseExample = path.join(templateData.directories.work, 'source/examples');
   const examplesToBuild = [];
@@ -79,7 +79,7 @@ module.exports = function(templateData, done) {
       }
       shell.mkdir('-p', destPath);
       shell.rm('-rf', destPath + '/*');
-      examplesToBuild.push({ name: className, destPath: destPath, sourcePath: sourcePath });
+      examplesToBuild.push({ name: className, destPath: destPath, sourcePath: sourcePath, compress: compress });
 
       var fullSplittedPath = getSplitedPath(sourcePath);
       while(fullSplittedPath.pop() !== className) {
@@ -145,7 +145,7 @@ module.exports = function(templateData, done) {
   function buildExample(list, done) {
     if (list.length) {
       var example = list.pop();
-      var config = buildWebpackConfiguration(defaultConfig, example.name, baseURL, example.sourcePath, example.destPath);
+      var config = buildWebpackConfiguration(defaultConfig, example.name, baseURL, example.sourcePath, example.destPath, example.compress);
       webpack(config, function(err, stats){
           if (err) {
               console.error(example.name + ' has errors.');

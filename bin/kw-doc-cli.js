@@ -11,6 +11,7 @@ program
   .option('-p, --publish',          'Publish documentation to github.io/gh-pages')
   .option('-s, --serve',            'Serve documentation at http://localhost:3000/{baseURL}')
   .option('-f, --filter [names...]','Filter examples to generate')
+  .option('-m, --minify',           'Minify examples')
   .parse(process.argv);
 
 // ----------------------------------------------------------------------------
@@ -29,6 +30,7 @@ if (!process.argv.slice(2).length) {
 var configFilePath = path.join(process.cwd(), program.config.replace(/\//g, path.sep));
 var basePath = path.dirname(configFilePath);
 var configuration = require(configFilePath);
+var compress = !!program.minify;
 
 // Variable extraction
 var workDir = path.join(basePath, configuration.work.replace(/\//g, path.sep));
@@ -193,7 +195,7 @@ if (configuration.examples && configuration.webpack) {
 
 // This is a long process
 if (templateData.examples && configuration.webpack) {
-  require('./examples.js')(templateData, doneWithProcessing);
+  require('./examples.js')(templateData, doneWithProcessing, compress);
 } else {
   doneWithProcessing();
 }
