@@ -6,6 +6,7 @@ function processModule(basePath, mPath, templateData) {
   templateData.__sidebar__.push(templateData.TAB + mPath + ':');
 
   var bPath = path.join(basePath, mPath);
+  var filePrefix = mPath.replace(/\/|\\/g, '_');
   var classes = shell.ls(bPath)
     .filter( function (f) {
       return shell.test('-d', path.join(bPath,f));
@@ -13,12 +14,12 @@ function processModule(basePath, mPath, templateData) {
 
   classes.forEach(function(className) {
     templateData.__en__.push(templateData.TAB + templateData.TAB + className + ': ' + className);
-    templateData.__sidebar__.push(templateData.TAB + templateData.TAB + className + ': ' + className + '.html');
-    processClass(bPath, className, templateData);
+    templateData.__sidebar__.push(templateData.TAB + templateData.TAB + className + ': ' + filePrefix + '_' + className + '.html');
+    processClass(bPath, className, templateData, filePrefix);
   });
 }
 
-function processClass(bPath, className, templateData) {
+function processClass(bPath, className, templateData, filePrefix) {
   var files = shell.ls(path.join(bPath, className))
         .filter(function(f) {
           // Do not include images
@@ -28,7 +29,7 @@ function processClass(bPath, className, templateData) {
           return shell.test('-f', path.join(bPath, className, f));
         }),
       apiIdx = files.indexOf('api.md'),
-      newPath = path.join(templateData.directories.work, 'source/api', className + '.md');
+      newPath = path.join(templateData.directories.work, 'source/api', filePrefix + '_' + className + '.md');
 
   if(apiIdx !== -1) {
     files.splice(apiIdx, 1);
