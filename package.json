@@ -30,6 +30,7 @@
     }
   },
   "bin": {
-    "kw-doc": "./bin/kw-doc-cli.js"
+    "kw-doc": "./bin/kw-doc-cli.js",
+    "StandaloneHTML": "./bin/singleHTML.js"
   }
 }
