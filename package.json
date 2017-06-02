@@ -7,12 +7,14 @@
     "url": "git+https://github.com/kitware/kw-doc.git"
   },
   "license": "BSD-3-Clause",
-  "bugs": { "url": "https://github.com/kitware/kw-doc/issues" },
+  "bugs": {
+    "url": "https://github.com/kitware/kw-doc/issues"
+  },
   "homepage": "https://github.com/kitware/kw-doc#readme",
   "dependencies": {
     "commander": "2.9.0",
-    "shelljs": "0.7.4",
-    "gh-pages": "0.10.0"
+    "shelljs": "0.7.7",
+    "gh-pages": "1.0.0"
   },
   "devDependencies": {
     "commitizen": "2.8.1",
