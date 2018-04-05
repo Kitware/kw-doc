@@ -32,6 +32,10 @@ var basePath = path.dirname(configFilePath);
 var configuration = require(configFilePath);
 var compress = !!program.minify;
 
+if (!configuration.config.authorLink) {
+  configuration.config.authorLink = 'https://www.kitware.com/';
+}
+
 // Variable extraction
 var workDir = path.join(basePath, configuration.work.replace(/\//g, path.sep));
 var targetDir = configuration.target ? path.join(basePath, configuration.target.replace(/\//g, path.sep)) : null;

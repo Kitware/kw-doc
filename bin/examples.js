@@ -23,16 +23,16 @@ function buildWebpackConfiguration(defaultConfig, name, baseURL, sourcePath, des
     }),
   ];
 
-  if (compress) {
-    examplePlugins.push(new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false,
-      },
-      output: {
-        comments: false,
-      },
-    }));
-  }
+  // if (compress) {
+  //   examplePlugins.push(new webpack.optimize.UglifyJsPlugin({
+  //     compress: {
+  //       warnings: false,
+  //     },
+  //     output: {
+  //       comments: false,
+  //     },
+  //   }));
+  // }
 
   var config = Object.assign(
     {
@@ -40,6 +40,7 @@ function buildWebpackConfiguration(defaultConfig, name, baseURL, sourcePath, des
     },
     defaultConfig,
     {
+      mode: compress ? 'production': 'development',
       entry: sourcePath,
       output: {
         path: destPath,
