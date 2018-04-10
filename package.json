@@ -12,19 +12,17 @@
   },
   "homepage": "https://github.com/kitware/kw-doc#readme",
   "dependencies": {
-    "commander": "2.9.0",
-    "shelljs": "0.7.7",
-    "gh-pages": "1.0.0"
+    "commander": "2.15.1",
+    "shelljs": "0.8.1",
+    "gh-pages": "1.1.0"
   },
   "devDependencies": {
-    "commitizen": "2.8.1",
-    "cz-conventional-changelog": "1.1.6",
-    "semantic-release": "4.3.5"
+    "kw-web-suite": "6.0.2"
   },
   "scripts": {
     "demo": "./bin/kw-doc-cli.js -c ./doc-example/kw-doc.js",
     "commit": "git cz",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+    "semantic-release": "semantic-release"
   },
   "config": {
     "commitizen": {
