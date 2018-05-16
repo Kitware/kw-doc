@@ -17,7 +17,7 @@
     "gh-pages": "1.1.0"
   },
   "devDependencies": {
-    "kw-web-suite": "6.0.2"
+    "kw-web-suite": "6.1.0"
   },
   "scripts": {
     "demo": "./bin/kw-doc-cli.js -c ./doc-example/kw-doc.js",

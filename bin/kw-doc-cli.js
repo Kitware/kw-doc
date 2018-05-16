@@ -50,7 +50,8 @@ var templateData = {
   __sidebar__: [],
   TAB: '  ',
   baseUrl: configuration.baseUrl,
-  webpack: configuration.webpack || {},
+  webpack: configuration.webpack,
+  parallelWebpack: configuration.parallelWebpack,
   // Directories
   directories: {
     work: workDir,
@@ -146,7 +147,7 @@ if (configuration.api) {
 // Extract examples
 // ----------------------------------------------------------------------------
 
-if (configuration.examples && configuration.webpack) {
+if (configuration.examples && configuration.webpack || configuration.parallelWebpack) {
   var filterExamples = [].concat(program.filter, program.args).filter(i => !!i);
   var buildAll = filterExamples.length === 0 || program.filter === true;
   var exampleCount = 0;
@@ -198,7 +199,7 @@ if (configuration.examples && configuration.webpack) {
 // ----------------------------------------------------------------------------
 
 // This is a long process
-if (templateData.examples && configuration.webpack) {
+if (templateData.examples && configuration.webpack || configuration.parallelWebpack) {
   require('./examples.js')(templateData, doneWithProcessing, compress);
 } else {
   doneWithProcessing();
