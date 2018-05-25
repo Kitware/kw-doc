@@ -56,7 +56,7 @@ function buildParallelWebpackConfiguration(
 
   // Config object
   textContent.push('{');
-  textContent.push(`  devtool: '${compress ? 'nosources-source-map' : 'cheap-source-map'}',`);
+  // textContent.push(`  devtool: '${compress ? 'nosources-source-map' : 'cheap-source-map'}',`);
   textContent.push(`  mode: '${compress ? 'production' : 'development'}',`);
   textContent.push(`  entry: '${sourcePath}',`);
   textContent.push(`  output: {`);
