@@ -20,8 +20,10 @@ function getSplitedPath(filePath) {
 }
 
 function addToList(src, dst) {
-  for (let i = 0; i < src.length; i++) {
-    dst.push(src[i]);
+  if (src) {
+    for (let i = 0; i < src.length; i++) {
+      dst.push(src[i]);
+    }
   }
 }
 
@@ -49,11 +51,6 @@ function buildParallelWebpackConfiguration(
 ) {
   const textContent = [];
 
-  // config objects
-  const plugins = pConfig.plugins || [];
-  const rules = pConfig.rules || [];
-  const alias = pConfig.alias || [];
-
   // Config object
   textContent.push('{');
   // textContent.push(`  devtool: '${compress ? 'nosources-source-map' : 'cheap-source-map'}',`);
@@ -72,19 +69,19 @@ function buildParallelWebpackConfiguration(
   textContent.push('    new webpack.DefinePlugin({');
   textContent.push(`      __BASE_PATH__: '"${baseURL}"',`);
   textContent.push('    }),');
-  addToList(plugins, textContent);
+  addToList(pConfig.plugins, textContent);
   textContent.push('  ],');
   textContent.push('  module: {');
   textContent.push('    rules: [');
   textContent.push(
     `      { test: '${sourcePath}', loader: 'expose-loader?${name}' },`
   );
-  addToList(rules, textContent);
+  addToList(pConfig.rules, textContent);
   textContent.push('    ],');
   textContent.push('  },');
   textContent.push('  resolve: {');
   textContent.push('    alias: {');
-  addToList(alias, textContent);
+  addToList(pConfig.alias, textContent);
   textContent.push('    },');
   textContent.push('  },');
   textContent.push('},');
