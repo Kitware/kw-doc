@@ -228,7 +228,7 @@ function doneWithProcessing() {
   shell.ShellString('\n\n').toEnd(destTraduction);
 
   if (configuration.cname) {
-    shell.echo(configuration.cname).to(path.join(workDir, 'CNAME'));
+    shell.echo(configuration.cname).to(path.join(workDir, 'public/CNAME'));
   }
 
   // ----------------------------------------------------------------------------
