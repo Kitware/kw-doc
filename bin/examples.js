@@ -62,7 +62,7 @@ function buildParallelWebpackConfiguration(
   textContent.push(`  },`);
   textContent.push('  plugins: [');
   textContent.push('    new HtmlWebpackPlugin({');
-  textContent.push(`      template: '${templatePath}',`);
+  textContent.push(`      template: '${pConfig.templatePath || templatePath}',`);
   textContent.push('      inject: "body",');
   textContent.push(`      title: '${name}',`);
   textContent.push('    }),');
