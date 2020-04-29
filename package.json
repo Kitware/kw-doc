@@ -14,10 +14,10 @@
   "dependencies": {
     "commander": "2.15.1",
     "shelljs": "0.8.1",
-    "gh-pages": "1.1.0"
+    "gh-pages": "2.2.0"
   },
   "devDependencies": {
-    "kw-web-suite": "6.1.0"
+    "kw-web-suite": "10.0.0"
   },
   "scripts": {
     "demo": "./bin/kw-doc-cli.js -c ./doc-example/kw-doc.js",
