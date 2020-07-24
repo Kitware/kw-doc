@@ -8,10 +8,13 @@ var api = require('./api.js');
 
 program
   .option('-c, --config [file.js]', 'Configuration file')
-  .option('-p, --publish',          'Publish documentation to github.io/gh-pages')
-  .option('-s, --serve',            'Serve documentation at http://localhost:3000/{baseURL}')
-  .option('-f, --filter [names...]','Filter examples to generate')
-  .option('-m, --minify',           'Minify examples')
+  .option('-p, --publish', 'Publish documentation to github.io/gh-pages')
+  .option(
+    '-s, --serve',
+    'Serve documentation at http://localhost:3000/{baseURL}'
+  )
+  .option('-f, --filter [names...]', 'Filter examples to generate')
+  .option('-m, --minify', 'Minify examples')
   .parse(process.argv);
 
 // ----------------------------------------------------------------------------
@@ -27,7 +30,10 @@ if (!process.argv.slice(2).length) {
 // Load configuration
 // ----------------------------------------------------------------------------
 
-var configFilePath = path.join(process.cwd(), program.config.replace(/\//g, path.sep));
+var configFilePath = path.join(
+  process.cwd(),
+  program.config.replace(/\//g, path.sep)
+);
 var basePath = path.dirname(configFilePath);
 var configuration = require(configFilePath);
 var compress = !!program.minify;
@@ -38,7 +44,9 @@ if (!configuration.config.authorLink) {
 
 // Variable extraction
 var workDir = path.join(basePath, configuration.work.replace(/\//g, path.sep));
-var targetDir = configuration.target ? path.join(basePath, configuration.target.replace(/\//g, path.sep)) : null;
+var targetDir = configuration.target
+  ? path.join(basePath, configuration.target.replace(/\//g, path.sep))
+  : null;
 
 // Shared variables
 var copyPool = [];
@@ -60,7 +68,7 @@ var templateData = {
   // Dynamic data
   apiFound: [],
   examples: {},
-}
+};
 
 // ----------------------------------------------------------------------------
 // Initialization
@@ -77,23 +85,35 @@ shell.cd(basePath);
 copyPool.push({ src: path.join(__dirname, '../template/*'), dest: workDir });
 
 // User data
-copyPool.push({ src: path.join(basePath, 'data/*'), dest: path.join(workDir, 'source/_data/') });
+copyPool.push({
+  src: path.join(basePath, 'data/*'),
+  dest: path.join(workDir, 'source/_data/'),
+});
 
 // User content
-copyPool.push({ src: path.join(basePath, 'content/*'), dest: path.join(workDir, 'source/') });
+copyPool.push({
+  src: path.join(basePath, 'content/*'),
+  dest: path.join(workDir, 'source/'),
+});
+
+// User theme
+copyPool.push({
+  src: path.join(basePath, 'themes/*'),
+  dest: path.join(workDir, 'themes/'),
+});
 
 // ----------------------------------------------------------------------------
 // Add copy from config
 // ----------------------------------------------------------------------------
 
 if (configuration.copy) {
-  configuration.copy.forEach(item => {
+  configuration.copy.forEach((item) => {
     copyPool.push({
       src: path.join(basePath, item.src),
       dest: path.join(basePath, item.dest),
     });
     shell.mkdir('-p', path.join(basePath, item.dest));
-  })
+  });
 }
 
 // ----------------------------------------------------------------------------
@@ -122,50 +142,61 @@ if (configuration.api) {
   templateData.__en__.push('  api:');
   templateData.__sidebar__.push('api:');
 
-  configuration.api.forEach(function (apiDir) {
+  configuration.api.forEach(function(apiDir) {
     var fullPath = path.join(basePath, apiDir);
     shell.cd(fullPath);
-    shell.find('.')
-      .filter( function(file) {
+    shell
+      .find('.')
+      .filter(function(file) {
         // FIXME expect {base}/[{module}/{package}]/{classname}
         return getSplitedPath(file).length === 2 && shell.test('-d', file);
       })
-      .forEach( function(module) {
+      .forEach(function(module) {
         api(fullPath, module, templateData);
       });
   });
   console.log('\n-----------------\n');
 
-  templateData.__en__ = [templateData.__en__
-    .filter(function(item, index) {
-      return templateData.__en__.indexOf(item) === index;
-    })
-    .join('\n')];
+  templateData.__en__ = [
+    templateData.__en__
+      .filter(function(item, index) {
+        return templateData.__en__.indexOf(item) === index;
+      })
+      .join('\n'),
+  ];
 }
 
 // ----------------------------------------------------------------------------
 // Extract examples
 // ----------------------------------------------------------------------------
 
-if (configuration.examples && configuration.webpack || configuration.parallelWebpack) {
-  var filterExamples = [].concat(program.filter, program.args).filter(i => !!i);
+if (
+  (configuration.examples && configuration.webpack) ||
+  configuration.parallelWebpack
+) {
+  var filterExamples = []
+    .concat(program.filter, program.args)
+    .filter((i) => !!i);
   var buildAll = filterExamples.length === 0 || program.filter === true;
   var exampleCount = 0;
 
   console.log('\n=> Extract examples\n');
-  configuration.examples.forEach(function (entry) {
-    const regexp = entry.regexp ? new RegExp(entry.regexp) : /example\/index.js$/;
+  configuration.examples.forEach(function(entry) {
+    const regexp = entry.regexp
+      ? new RegExp(entry.regexp)
+      : /example\/index.js$/;
     var fullPath = path.join(basePath, entry.path ? entry.path : entry);
 
     // Single example use case
     templateData.examples[fullPath] = {};
     var currentExamples = templateData.examples[fullPath];
     shell.cd(fullPath);
-    shell.find('.')
-      .filter( function(file) {
+    shell
+      .find('.')
+      .filter(function(file) {
         return file.match(regexp);
       })
-      .forEach( function(file) {
+      .forEach(function(file) {
         var fullPath = getSplitedPath(file),
           exampleName = fullPath.pop();
 
@@ -187,11 +218,13 @@ if (configuration.examples && configuration.webpack || configuration.parallelWeb
     templateData.examples = null;
   }
 
-  templateData.__en__ = [templateData.__en__
-    .filter(function(item, index) {
-      return templateData.__en__.indexOf(item) === index;
-    })
-    .join('\n')];
+  templateData.__en__ = [
+    templateData.__en__
+      .filter(function(item, index) {
+        return templateData.__en__.indexOf(item) === index;
+      })
+      .join('\n'),
+  ];
 }
 
 // ----------------------------------------------------------------------------
@@ -199,7 +232,10 @@ if (configuration.examples && configuration.webpack || configuration.parallelWeb
 // ----------------------------------------------------------------------------
 
 // This is a long process
-if (templateData.examples && configuration.webpack || configuration.parallelWebpack) {
+if (
+  (templateData.examples && configuration.webpack) ||
+  configuration.parallelWebpack
+) {
   require('./examples.js')(templateData, doneWithProcessing, compress);
 } else {
   doneWithProcessing();
@@ -208,7 +244,6 @@ if (templateData.examples && configuration.webpack || configuration.parallelWebp
 // ----------------------------------------------------------------------------
 
 function doneWithProcessing() {
-
   // ----------------------------------------------------------------------------
   // Generate sidebar and traduction for Hexo
   // ----------------------------------------------------------------------------
@@ -239,7 +274,9 @@ function doneWithProcessing() {
   shell.cat(path.join(workDir, '__config__')).to(destConfig);
   var ymlConf = configuration.config;
   Object.keys(ymlConf).forEach(function(key) {
-    shell.ShellString([ key, ': ', ymlConf[key], '\n'].join('')).toEnd(destConfig);
+    shell
+      .ShellString([key, ': ', ymlConf[key], '\n'].join(''))
+      .toEnd(destConfig);
   });
   shell.ShellString('\n').toEnd(destConfig);
 
@@ -271,31 +308,31 @@ function doneWithProcessing() {
   // Github pages
   // ----------------------------------------------------------------------------
 
-  if(program.publish) {
-      console.log('\n=> Publish\n');
-      var options = {};
+  if (program.publish) {
+    console.log('\n=> Publish\n');
+    var options = {};
 
-      if(process.env.GIT_PUBLISH_URL) {
-          console.log('Use custom URL');
-          options.repo = process.env.GIT_PUBLISH_URL;
+    if (process.env.GIT_PUBLISH_URL) {
+      console.log('Use custom URL');
+      options.repo = process.env.GIT_PUBLISH_URL;
+    }
+
+    require('gh-pages').publish(workDir + '/public', options, function(err) {
+      if (err) {
+        console.log('Error while publishing');
+        console.log(err);
       }
-
-      require('gh-pages').publish(workDir + '/public', options, function(err) {
-          if(err) {
-              console.log('Error while publishing');
-              console.log(err);
-          }
-          console.log(' - Web site published to github.io');
-      });
+      console.log(' - Web site published to github.io');
+    });
   }
 
   // ----------------------------------------------------------------------------
   // Serve local pages
   // ----------------------------------------------------------------------------
 
-  if(program.serve) {
-      console.log('\n=> Serve documentation:\n');
-      shell.cd(workDir);
-      shell.exec('npm run server');
+  if (program.serve) {
+    console.log('\n=> Serve documentation:\n');
+    shell.cd(workDir);
+    shell.exec('npm run server');
   }
 }
