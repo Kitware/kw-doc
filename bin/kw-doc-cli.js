@@ -112,7 +112,6 @@ if (configuration.copy) {
       src: path.join(basePath, item.src),
       dest: path.join(basePath, item.dest),
     });
-    shell.mkdir('-p', path.join(basePath, item.dest));
   });
 }
 
@@ -123,6 +122,7 @@ if (configuration.copy) {
 while (copyPool.length) {
   var srcDest = copyPool.shift();
   console.log(' - copy: ', srcDest.src, 'to', srcDest.dest);
+  shell.mkdir('-p', srcDest.dest);
   shell.cp('-rf', srcDest.src, srcDest.dest);
 }
 
