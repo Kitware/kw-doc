@@ -13,8 +13,8 @@
   "homepage": "https://github.com/kitware/kw-doc#readme",
   "dependencies": {
     "commander": "2.15.1",
-    "shelljs": "0.8.1",
-    "gh-pages": "2.2.0"
+    "shelljs": "0.8.4",
+    "gh-pages": "3.1.0"
   },
   "devDependencies": {
     "kw-web-suite": "10.0.0"
