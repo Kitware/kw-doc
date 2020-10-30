@@ -74,7 +74,7 @@ function buildParallelWebpackConfiguration(
   textContent.push('  module: {');
   textContent.push('    rules: [');
   textContent.push(
-    `      { test: '${sourcePath}', loader: 'expose-loader?${name}' },`
+    `      { test: '${sourcePath}', loader: 'expose-loader', options: { exposes: '${name}' } },`
   );
   addToList(pConfig.rules, textContent);
   textContent.push('    ],');
@@ -141,12 +141,18 @@ function buildWebpackConfiguration(
   if (config.module.loaders) {
     config.module.loaders.unshift({
       test: sourcePath,
-      loader: 'expose-loader?' + name,
+      loader: 'expose-loader',
+      options: {
+        exposes: name,
+      },
     });
   } else if (config.module.rules) {
     config.module.rules.unshift({
       test: sourcePath,
-      loader: 'expose-loader?' + name,
+      loader: 'expose-loader',
+      options: {
+        exposes: name,
+      },
     });
   }
 
