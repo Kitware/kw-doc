@@ -1,11 +1,12 @@
 #! /usr/bin/env node
 
 /* eslint-disable */
-var program = require('commander');
+var { Command } = require('commander');
 var shell = require('shelljs');
 var path = require('path');
 var api = require('./api.js');
 
+const program = new Command();
 program
   .option('-c, --config [file.js]', 'Configuration file')
   .option('-p, --publish', 'Publish documentation to github.io/gh-pages')
