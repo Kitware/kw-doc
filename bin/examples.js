@@ -80,6 +80,9 @@ function buildParallelWebpackConfiguration(
   textContent.push('    ],');
   textContent.push('  },');
   textContent.push('  resolve: {');
+  textContent.push('    fallback: {');
+  textContent.push('      stream: require.resolve(\'stream-browserify\'),');
+  textContent.push('    },');
   textContent.push('    alias: {');
   addToList(pConfig.alias, textContent);
   textContent.push('    },');
