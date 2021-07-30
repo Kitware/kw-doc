@@ -112,6 +112,7 @@ if (configuration.copy) {
     copyPool.push({
       src: path.join(basePath, item.src),
       dest: path.join(basePath, item.dest),
+      destIsTarget: !!item.destIsTarget,
     });
   });
 }
@@ -123,7 +124,13 @@ if (configuration.copy) {
 while (copyPool.length) {
   var srcDest = copyPool.shift();
   console.log(' - copy: ', srcDest.src, 'to', srcDest.dest);
-  shell.mkdir('-p', srcDest.dest);
+  var dest = srcDest.dest;
+  // if dest is target, make the parent dirs instead.
+  // dest doesn't have to exist, since we copy SRC to DEST.
+  if (srcDest.destIsTarget) {
+    dest = path.dirname(dest);
+  }
+  shell.mkdir('-p', dest);
   shell.cp('-rf', srcDest.src, srcDest.dest);
 }
 
