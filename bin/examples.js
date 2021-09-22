@@ -59,6 +59,11 @@ function buildParallelWebpackConfiguration(
   textContent.push(`  output: {`);
   textContent.push(`    path: '${destPath}',`);
   textContent.push(`    filename: '${name}.js',`);
+  if (pConfig.output) {
+    if ('publicPath' in pConfig.output) {
+      textContent.push(`    publicPath: '${pConfig.output.publicPath}',`);
+    }
+  }
   textContent.push(`  },`);
   textContent.push('  plugins: [');
   textContent.push('    new HtmlWebpackPlugin({');
