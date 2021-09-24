@@ -13,6 +13,12 @@ var examplesConfigPath = path.resolve(
   './examples.webpack.config.js'
 );
 
+// escapes windows paths
+// for use when inserting windows path literals in codegen
+function escPath(p) {
+  return p.replace(/\\/g, '\\\\');
+}
+
 function getSplitedPath(filePath) {
   var a = filePath.split('/');
   var b = filePath.split('\\');
@@ -29,7 +35,7 @@ function addToList(src, dst) {
 
 function buildParallelWebpackConfigurationHeader(pConfig) {
   const textContent = [];
-  textContent.push(`const rootPath = '${pConfig.rootPath}';`);
+  textContent.push(`const rootPath = '${escPath(pConfig.rootPath)}';`);
   textContent.push(`const webpack = require('webpack');`);
   textContent.push(`const HtmlWebpackPlugin = require('html-webpack-plugin');`);
   textContent.push(`const path = require('path');`);
@@ -55,10 +61,10 @@ function buildParallelWebpackConfiguration(
   textContent.push('{');
   // textContent.push(`  devtool: '${compress ? 'nosources-source-map' : 'cheap-source-map'}',`);
   textContent.push(`  mode: '${compress ? 'production' : 'development'}',`);
-  textContent.push(`  entry: '${sourcePath}',`);
+  textContent.push(`  entry: '${escPath(sourcePath)}',`);
   textContent.push(`  output: {`);
-  textContent.push(`    path: '${destPath}',`);
-  textContent.push(`    filename: '${name}.js',`);
+  textContent.push(`    path: '${escPath(destPath)}',`);
+  textContent.push(`    filename: '${escPath(name)}.js',`);
   if (pConfig.output) {
     if ('publicPath' in pConfig.output) {
       textContent.push(`    publicPath: '${pConfig.output.publicPath}',`);
@@ -67,7 +73,7 @@ function buildParallelWebpackConfiguration(
   textContent.push(`  },`);
   textContent.push('  plugins: [');
   textContent.push('    new HtmlWebpackPlugin({');
-  textContent.push(`      template: '${pConfig.templatePath || templatePath}',`);
+  textContent.push(`      template: '${escPath(pConfig.templatePath || templatePath)}',`);
   textContent.push('      inject: "body",');
   textContent.push(`      title: '${name}',`);
   textContent.push('    }),');
@@ -79,7 +85,7 @@ function buildParallelWebpackConfiguration(
   textContent.push('  module: {');
   textContent.push('    rules: [');
   textContent.push(
-    `      { test: '${sourcePath}', loader: 'expose-loader', options: { exposes: '${name}' } },`
+    `      { test: '${escPath(sourcePath)}', loader: 'expose-loader', options: { exposes: '${name}' } },`
   );
   addToList(pConfig.rules, textContent);
   textContent.push('    ],');
